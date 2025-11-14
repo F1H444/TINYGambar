@@ -10,6 +10,7 @@ import {
   FiCheckCircle,
   FiDownload,
   FiInfo,
+  FiX,
 } from "react-icons/fi";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
@@ -67,13 +68,23 @@ export default function HeroConverter() {
     ]);
   }, []);
 
+  const removeFile = (index: number) => {
+    setFiles((prevFiles) => {
+      const newFiles = [...prevFiles];
+      URL.revokeObjectURL(newFiles[index].preview);
+      newFiles.splice(index, 1);
+      return newFiles;
+    });
+  };
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      "image/png": [".png"],
-      "image/jpeg": [".jpg", ".jpeg"],
-      "image/gif": [".gif"],
+      "image/*": [".png", ".jpg", ".jpeg", ".gif", ".webp", ".bmp", ".svg"],
     },
+    noClick: false,
+    noKeyboard: false,
+    multiple: true,
   });
 
   const convertImage = (
@@ -276,15 +287,24 @@ export default function HeroConverter() {
               {files.map((file: UploadedFile, i: number) => (
                 <div
                   key={i}
-                  className="flex items-center justify-between p-2 text-black"
+                  className="flex items-center justify-between p-2 text-black hover:bg-gray-100 rounded"
                 >
-                  <span className="flex items-center gap-2 truncate">
+                  <span className="flex items-center gap-2 truncate flex-1">
                     <FiFile />
                     <span className="font-medium truncate">{file.name}</span>
                   </span>
-                  <span className="text-sm text-gray-600 shrink-0">
-                    {formatBytes(file.size)}
-                  </span>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="text-sm text-gray-600">
+                      {formatBytes(file.size)}
+                    </span>
+                    <button
+                      onClick={() => removeFile(i)}
+                      className="p-1 hover:bg-red-100 rounded-full transition-colors"
+                      title="Hapus file"
+                    >
+                      <FiX className="text-red-600" size={20} />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
