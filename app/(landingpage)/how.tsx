@@ -26,6 +26,7 @@ const steps = [
 ];
 
 // Varian animasi untuk Framer Motion
+// ✅ PERBAIKAN 1: Menambahkan 'as const'
 const gridVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -34,8 +35,9 @@ const gridVariants = {
       staggerChildren: 0.2, // Setiap anak akan muncul 0.2s setelah sebelumnya
     },
   },
-};
+} as const;
 
+// ✅ PERBAIKAN 2: Menambahkan 'as const'
 const cardVariants = {
   hidden: {
     opacity: 0,
@@ -50,11 +52,14 @@ const cardVariants = {
       damping: 10,
     },
   },
-};
+} as const;
 
 export default function HowItWorks() {
   return (
-    <section className="w-full bg-white py-24 px-4 md:px-8 border-t-4 border-black overflow-hidden" id="how-it-works">
+    <section
+      className="w-full bg-white py-24 px-4 md:px-8 border-t-4 border-black overflow-hidden"
+      id="how-it-works"
+    >
       {/* Kontainer miring untuk efek dinamis */}
       <motion.div
         className="max-w-6xl mx-auto -skew-y-3" // <-- EFEK MIRING BRUTALIST
@@ -91,12 +96,13 @@ export default function HowItWorks() {
                          flex flex-col relative overflow-hidden
                          group" // <-- 'group' untuk hover
               variants={cardVariants} // Terapkan varian untuk setiap kartu
-              // Animasi saat di-hover (Brutalist style)
+              // ✅ PERBAIKAN 3: Memindahkan 'transition' ke DALAM 'whileHover'
               whileHover={{
                 y: -8,
                 boxShadow: "10px 10px 0px #000",
+                transition: { type: "spring", stiffness: 300 },
               }}
-              transition={{ type: "spring", stiffness: 300 }}
+              // Properti 'transition' yang terpisah dihapus dari sini
             >
               {/* EFEK HOVER: Latar belakang kuning muncul */}
               <div
