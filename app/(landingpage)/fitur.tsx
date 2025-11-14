@@ -60,13 +60,19 @@ export default function Features() {
   // Mendefinisikan class dasar untuk kartu agar mudah digunakan kembali
   const cardBaseClass =
     "bg-white border-4 border-black rounded-lg p-8 shadow-brutalist transition-all duration-200 hover:bg-black hover:text-white group";
+
+  // Properti hover untuk motion.div
+  // ✅ DIPERBAIKI: Menambahkan 'as const' untuk mengatasi error TypeScript
   const cardHoverProps = {
     whileHover: { y: -8, boxShadow: "10px 10px 0px #000" },
     transition: { type: "spring", stiffness: 300 },
-  };
+  } as const;
 
   return (
-    <section className="w-full bg-yellow-300 py-24 px-4 md:px-8 border-t-4 border-black" id="features">
+    <section
+      className="w-full bg-yellow-300 py-24 px-4 md:px-8 border-t-4 border-black"
+      id="features"
+    >
       <motion.div
         className="max-w-6xl mx-auto"
         initial="hidden"
@@ -92,7 +98,8 @@ export default function Features() {
             variants={itemVariants}
             {...cardHoverProps}
           >
-            <div className="mb-5 md:mb-0 text-black group-hover:text-yellow-300 transition-colors flex-shrink-0">
+            {/* ✅ DIPERBAIKI: Mengganti flex-shrink-0 menjadi shrink-0 */}
+            <div className="mb-5 md:mb-0 text-black group-hover:text-yellow-300 transition-colors shrink-0">
               {features[0].icon}
             </div>
             <div>
@@ -145,7 +152,8 @@ export default function Features() {
             variants={itemVariants}
             {...cardHoverProps}
           >
-            <div className="mb-5 md:mb-0 text-black group-hover:text-yellow-300 transition-colors flex-shrink-0">
+            {/* ✅ DIPERBAIKI: Mengganti flex-shrink-0 menjadi shrink-0 */}
+            <div className="mb-5 md:mb-0 text-black group-hover:text-yellow-300 transition-colors shrink-0">
               {features[3].icon}
             </div>
             <div>
