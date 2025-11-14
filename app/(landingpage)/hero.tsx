@@ -56,19 +56,25 @@ export default function HeroConverter() {
     }
   }, [files, format, quality]);
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    setConvertedFiles(null);
-    setFiles((prevFiles: UploadedFile[]) => [
-      ...prevFiles,
-      ...acceptedFiles.map((file) =>
-        Object.assign(file, {
-          preview: URL.createObjectURL(file),
-        })
-      ),
-    ]);
+  const onDrop = useCallback((acceptedFiles: File[], rejectedFiles: any[]) => {
+    console.log("Accepted files:", acceptedFiles);
+    console.log("Rejected files:", rejectedFiles);
+    
+    if (acceptedFiles.length > 0) {
+      setConvertedFiles(null);
+      setFiles((prevFiles: UploadedFile[]) => [
+        ...prevFiles,
+        ...acceptedFiles.map((file) =>
+          Object.assign(file, {
+            preview: URL.createObjectURL(file),
+          })
+        ),
+      ]);
+    }
   }, []);
 
-  const removeFile = (index: number) => {
+  const removeFile = (index: number, event: React.MouseEvent) => {
+    event.stopPropagation(); // Prevent triggering dropzone click
     setFiles((prevFiles) => {
       const newFiles = [...prevFiles];
       URL.revokeObjectURL(newFiles[index].preview);
@@ -80,11 +86,12 @@ export default function HeroConverter() {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      "image/*": [".png", ".jpg", ".jpeg", ".gif", ".webp", ".bmp", ".svg"],
+      "image/*": [],
     },
     noClick: false,
     noKeyboard: false,
     multiple: true,
+    useFsAccessApi: false,
   });
 
   const convertImage = (
@@ -157,6 +164,8 @@ export default function HeroConverter() {
       console.error("Error selama konversi:", error);
     } finally {
       setIsConverting(false);
+      // Clear files after conversion
+      files.forEach(file => URL.revokeObjectURL(file.preview));
       setFiles([]);
     }
   };
@@ -234,15 +243,16 @@ export default function HeroConverter() {
           </motion.p>
         </motion.div>
 
-        {/* KOTAK UPLOAD */}
-        {files.length === 0 && !convertedFiles && (
+        {/* KOTAK UPLOAD - Selalu tampil */}
+        {!convertedFiles && (
           <div {...getRootProps()}>
             <motion.div
               variants={itemVariants}
               className={`w-full h-64 p-8 bg-white border-4 border-black rounded-lg
                           flex flex-col items-center justify-center text-center
                           cursor-pointer transition-all duration-200
-                          shadow-brutalist hover:shadow-brutalist-hover focus:outline-none`}
+                          shadow-brutalist hover:shadow-brutalist-hover focus:outline-none
+                          ${files.length > 0 ? 'mb-8' : ''}`}
               animate={{
                 scale: isDragActive ? 1.05 : 1,
                 backgroundColor: isDragActive ? "#000000" : "#FFFFFF",
@@ -264,9 +274,15 @@ export default function HeroConverter() {
               <p className="text-xl font-bold mt-4">
                 {isDragActive
                   ? "LEPASKAN SEKARANG!"
+                  : files.length > 0 
+                  ? "Tambah lebih banyak gambar..."
                   : "Seret file ke sini, atau klik untuk memilih."}
               </p>
-              <p className="text-sm mt-2">(Maks. 10MB per file)</p>
+              <p className="text-sm mt-2">
+                {files.length > 0 
+                  ? `${files.length} file siap. Tambah lebih banyak atau scroll untuk konversi.`
+                  : "(Support semua format gambar)"}
+              </p>
             </motion.div>
           </div>
         )}
@@ -298,9 +314,10 @@ export default function HeroConverter() {
                       {formatBytes(file.size)}
                     </span>
                     <button
-                      onClick={() => removeFile(i)}
+                      onClick={(e) => removeFile(i, e)}
                       className="p-1 hover:bg-red-100 rounded-full transition-colors"
                       title="Hapus file"
+                      type="button"
                     >
                       <FiX className="text-red-600" size={20} />
                     </button>
@@ -391,6 +408,7 @@ export default function HeroConverter() {
             <motion.button
               onClick={handleConversion}
               disabled={isConverting}
+              type="button"
               className={`w-full p-4 mt-4 text-xl font-bold border-4 border-black rounded-lg
                           shadow-brutalist hover:shadow-brutalist-hover
                           flex items-center justify-center gap-3
@@ -455,6 +473,7 @@ export default function HeroConverter() {
             </p>
             <motion.button
               onClick={handleDownload}
+              type="button"
               className={`w-full p-4 text-xl font-bold border-4 border-black rounded-lg
                           shadow-brutalist hover:shadow-brutalist-hover
                           flex items-center justify-center gap-3
