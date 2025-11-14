@@ -12,8 +12,6 @@
 <br />
 Ubah PNG/JPG/GIF menjadi WebP dengan gaya _Neo-Brutalism_.
 
-[Lihat Demo](https://tinygambar.vercel.app) · [Lapor Bug](https://github.com/username/tinygambar/issues)
-
 </div>
 
 ---
