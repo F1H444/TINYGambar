@@ -1,6 +1,7 @@
 # ⚡ TINYGambar
 
-![Banner Image](public/opengraph-image.png) 
+<img width="1919" height="993" alt="image" src="https://github.com/user-attachments/assets/20900d0e-637d-4ece-9681-04af8c86cfe7" />
+
 <div align="center">
 
 [![Next.js](https://img.shields.io/badge/Next.js-16.0-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
